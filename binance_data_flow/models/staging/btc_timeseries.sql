@@ -5,7 +5,7 @@ SELECT
     CAST(quantity AS DECIMAL(18, 8)),
     timestamp
 FROM
-    {{ ref('raw_binance_data')}}
+    {{ ref('raw_binance_data') }}
 WHERE
     eventType = 'aggTrade'
     and symbol = 'BTCUSDT'
