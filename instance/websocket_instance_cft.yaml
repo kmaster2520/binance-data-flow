@@ -25,7 +25,7 @@ Parameters:
     Description: The ID of the subnet to launch the instance in (use a private subnet for security)
   SecurityGroupId:
     Type: AWS::EC2::SecurityGroup::Id
-    Description: Security group ID allowing outbound traffic (HTTPS/9443 for Binance, AWS services)
+    Description: Security group ID for the Instance
   IamInstanceProfile:
     Type: String
     Description: Name of the IAM instance profile/role (must allow Kinesis:PutRecord*, logs, etc.)
@@ -46,7 +46,6 @@ Resources:
       SecurityGroupIds:
         - !Ref SecurityGroupId
       IamInstanceProfile: !If [HasInstanceProfile, !Ref IamInstanceProfile, !Ref "AWS::NoValue"]
-      # Optional: Enable detailed monitoring (costs extra ~$0.015/hour)
       Monitoring: false
       UserData:
         Fn::Base64: !Sub |
@@ -57,13 +56,14 @@ Resources:
 
           PYTHON=/usr/bin/python3.12
           PIP=/usr/bin/pip3.12
+          SCRIPT_PATH=/root/websocket_script_coinbase.py
 
-          aws s3 cp s3://greatestbucketever/websocket_folder/websocket_script.py /root/websocket_script.py
+          aws s3 cp s3://greatestbucketever/websocket_folder/websocket_script_coinbase.py $SCRIPT_PATH
           $PIP install boto3==1.42.67 websockets==16.0   # lock versions for stability
 
           cat > /etc/systemd/system/binance_websocket.service << EOL
           [Unit]
-          Description=Binance Websocket Script
+          Description=Coinbase Websocket Script
           StartLimitIntervalSec=0
 
           [Service]
@@ -71,7 +71,7 @@ Resources:
           Type=simple
           Restart=always
           RestartSec=1
-          ExecStart=$PYTHON /root/websocket_script.py 5000
+          ExecStart=$PYTHON $SCRIPT_PATH
 
           [Install]
           WantedBy=multi-user.target

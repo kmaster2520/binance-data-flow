@@ -4,12 +4,12 @@ Parameters:
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: The ID of the VPC where the security group will be created.
-  InstanceConnectSubnetId:
+  SubnetId:
     Type: AWS::EC2::Subnet::Id
     Description: The ID of the subnet for the EC2 instance connect endpoint
 
 Resources:
-  BinanceInstanceSecurityGroup:
+  InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable SSH and HTTP access via port 22 and 80
@@ -27,8 +27,8 @@ Resources:
           Description: Enable EC2 Instance connect
       Tags:
         - Key: Application
-          Value: BinanceDataFlow
-  BinanceKinesisEndpointGroup:
+          Value: CoinbaseDataFlow
+  KinesisEndpointSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable Access from EC2 instances
@@ -44,15 +44,31 @@ Resources:
           ToPort: 80
           CidrIp: 0.0.0.0/0
           Description: Allow http access from anywhere
-  BinanceInstanceInstaceConnect:
+  InstanceConnectEndpoint:
     Type: AWS::EC2::InstanceConnectEndpoint
     Properties:
       PreserveClientIp: true
-      SubnetId: !Ref InstanceConnectSubnetId
+      SubnetId: !Ref SubnetId
+  KinesisStreamsVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcEndpointType: Interface
+      VpcId: !Ref VpcId
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.kinesis-streams
+      SubnetId: !Ref SubnetId
+      SecurityGroupIds:
+        - !Ref KinesisEndpointGroup
+  S3GatewayEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcEndpointType: Gateway
+      VpcId: !Ref VpcId
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
+
 Outputs:
   InstanceSGId:
     Description: The ID of the created instance security group
-    Value: !Ref BinanceInstanceSecurityGroup
+    Value: !Ref InstanceSecurityGroup
   KinesisEndpointSGId:
     Description: The ID of the created kinesis endpoint security group
-    Value: !Ref BinanceKinesisEndpointGroup
+    Value: !Ref KinesisEndpointGroup
