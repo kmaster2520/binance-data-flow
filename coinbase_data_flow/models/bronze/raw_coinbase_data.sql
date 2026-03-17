@@ -5,7 +5,13 @@
 ) }}
 
 SELECT
-  *
+    eventType,
+    symbol,
+    CAST(price AS DECIMAL(18, 8)),
+    CAST(quantity AS DECIMAL(18, 8)),
+    tradeId,
+    side,
+    tradeTime
 FROM STREAM(
     read_files(
       's3://greatestbucketever/coinbase/raw/',

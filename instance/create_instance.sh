@@ -2,7 +2,7 @@
 
 SUBNET_ID="subnet-0ac0bc58b5403af7b"
 
-TICKER="BTC"
+TICKER="ETH"
 COINBASE_TICKER="${TICKER}-USD"
 
 aws cloudformation create-stack \

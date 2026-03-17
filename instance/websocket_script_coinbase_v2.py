@@ -38,7 +38,6 @@ async def process_websocket_response(*, res, kinesis_client):
                 })
 
         if len(batch_records) > 0:
-            print(f'uploading to kinesis: {len(batch_records)}')
             await asyncio.to_thread(
                 kinesis_client.put_records,
                 StreamName=KINESIS_STREAM_NAME,
@@ -69,12 +68,11 @@ async def begin_stream(*, symbol="BTC-USD"):
     kinesis_client = boto3.client('kinesis', region)
 
     async with websockets.connect(url) as ws, asyncio.TaskGroup() as tg:
-        print(f"Subscribing to websocket")
+        print(f"Subscribing to websocket, using symbol: {symbol}")
         try:
             await ws.send(json.dumps(subscribe_message))
-            for i in range(2):
+            while True:
                 res = await ws.recv()
-                print(res)
                 tg.create_task(process_websocket_response(res=res, kinesis_client=kinesis_client))
         except KeyboardInterrupt:
             print("keyboard interrupt")
