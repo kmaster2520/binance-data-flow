@@ -7,6 +7,6 @@ SELECT
 FROM
     {{ ref('raw_coinbase_data') }}
 WHERE
-    tradeTime >= current_timestamp() - INTERVAL 1 HOUR
+    tradeTime >= current_timestamp() - INTERVAL 1 DAY
 GROUP BY
     symbol
