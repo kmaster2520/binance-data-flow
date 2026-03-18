@@ -34,6 +34,9 @@ models:
     bronze:
       +materialized: streaming_table
       +schema: bronze
-    staging:
+    silver:
       +materialized: view
-      +schema: staging
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold
