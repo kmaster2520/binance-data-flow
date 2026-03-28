@@ -8,8 +8,4 @@ venv/
 env/
 .env/
 
-# allow these eventually
-cdk/
-CLAUDE.md
-
 zzz*

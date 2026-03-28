@@ -57,7 +57,7 @@ Resources:
       ServiceName: !Sub com.amazonaws.${AWS::Region}.kinesis-streams
       SubnetId: !Ref SubnetId
       SecurityGroupIds:
-        - !Ref KinesisEndpointGroup
+        - !Ref KinesisEndpointSecurityGroup
   S3GatewayEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -71,4 +71,4 @@ Outputs:
     Value: !Ref InstanceSecurityGroup
   KinesisEndpointSGId:
     Description: The ID of the created kinesis endpoint security group
-    Value: !Ref KinesisEndpointGroup
+    Value: !Ref KinesisEndpointSecurityGroup
