@@ -1,6 +1,5 @@
 {{ config(
-    materialized = 'incremental',
-    incremental_strategy = 'insert_overwrite',
+    materialized = 'table',
     cluster_by = ['symbol']
 ) }}
 
